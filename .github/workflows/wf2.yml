@@ -1,0 +1,18 @@
+name: Set up a new main marzban server
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ansible:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Ansible
+        run: sudo apt update && sudo apt install -y ansible
+
+      - name: Run playbook
+        run: ansible-playbook ansible/playbooks/marzhban_main_init.yml -i ansible/inventories/local/hosts.yml
