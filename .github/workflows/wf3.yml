@@ -1,0 +1,31 @@
+name: Set up a new marzban nodes
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ansible:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+#      - name: Install Ansible
+#        run: |
+#          sudo apt update
+#          sudo apt install -y ansible
+
+      - name: Setup SSH key and connect
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Check Ansible Config
+        run: |
+          ANSIBLE_CONFIG=.github/workflows/ansible/ansible.cfg ansible --version
+
+      - name: Run playbook
+        run: |
+          ansible-playbook -i .github/workflows/ansible/inventories/local/hosts.yml .github/workflows/ansible/playbooks/marzhban_worker_init.yml
